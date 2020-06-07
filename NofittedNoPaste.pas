@@ -5,7 +5,7 @@ var
   ComponentPCB: IPCB_Component;
   boolAss     : boolean;
   boolused    : boolean;
-
+  NoFitye     : boolean;
   RulePaste   : IPCB_PasteMaskExpansionRule;
 
   filter      : string;
@@ -22,6 +22,7 @@ var
   fitted : boolean;
 
 Begin
+  NoFitye := true;
   boolAss := False;
   boolused := False;
   fitted := True;
@@ -65,6 +66,7 @@ Begin
       if (CompVariation.DM_VariationKind = eVariation_NotFitted) then
       begin
            filter := filter + '(Component = ''' + Component.DM_PhysicalDesignator + ''') OR ';
+           NoFitye := false;
       end;
    end;
   filter := copy(filter,1,Length(filter) - 4) + ')';
@@ -75,6 +77,13 @@ Begin
   RulePaste.Name := 'Disable paste :' +Variant.DM_Description;
   RulePaste.Comment := 'Disable paste';
   RulePaste.Scope1Expression := filter;
+
+  if NoFitye then
+  begin
+      ShowMessage('No NotFitted components.');
+      exit;
+  end;
+
   Board.AddPCBObject(RulePaste);
 
 end;
